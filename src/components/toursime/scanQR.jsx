@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {} from "semantic-ui-react";
 import QrReader from "react-qr-reader";
 import axios from "axios";
@@ -6,10 +6,12 @@ import axios from "axios";
 //IMPORT CONPONENTS
 
 //import Popup from "./popup";
+import DataContext from "../../context/DataContext";
 
 export default function ScanQR() {
   const [trips, setTrips] = useState([]);
   const [getQR, setQR] = useState({ resultat: "" });
+  //const { newtrips, setnewtrips } = useContext(DataContext);
 
   useEffect(() => {
     axios
@@ -30,7 +32,12 @@ export default function ScanQR() {
   const handleScan = data => {
     if (data) {
       console.log(data);
-      setQR({ resultat: data });
+      trips.map(trip => {
+        if (data === trip.id) {
+          console.log("OK");
+        }
+      });
+      alert("Le QR Code a bien été scanné");
     }
   };
   return (
@@ -42,6 +49,7 @@ export default function ScanQR() {
         onScan={handleScan}
         style={{ width: "100%" }}
       />
+      <p>Resultat: {getQR.resultat}</p>
     </div>
   );
 }
