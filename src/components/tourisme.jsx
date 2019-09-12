@@ -1,7 +1,26 @@
-import React from "react";
-import {} from "semantic-ui-react";
+import React, { useContext } from "react";
+import "../scss/tourisme.scss";
 
-//IMPORT CONPONENTS
-import Tourisme_container from "./toursime/tourisme_container";
+//SEMANTIC UI
+import { Container, Segment } from "semantic-ui-react";
 
-//créer le context pour la requete axios vers la liste des parcours
+//IMPORT COMPONENTS
+import ListParcours from "../components/toursime/list-parcours";
+import ScanQR from "../components/toursime/scanQR";
+
+//APP CONTEXT
+
+export default function Tourisme() {
+  return (
+    <Container>
+      <Segment.Group>
+        <Segment>
+          <ListParcours />
+        </Segment>
+        <Segment>
+          <ScanQR />
+        </Segment>
+      </Segment.Group>
+    </Container>
+  );
+}
