@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./scss/App.scss";
 import { Container, Button } from "semantic-ui-react";
@@ -14,8 +14,22 @@ import { DataProvider } from "./context/DataContext";
 function App() {
   const HandleBackTourisme = () => {};
 
+  const [trips, setTrips] = useState([]);
+ 
+  const tripsSetter = (newtrips)=>{
+    if (Array.isArray(newtrips)){
+    setTrips([...trips, ...newtrips])
+  } else {setTrips([...trips, newtrips])}
+  }
+
   return (
     <div className="App">
+    <DataProvider
+      value={{
+        setTripsContext: tripsSetter,
+        listTrips: trips
+      }}
+    >
       <Container>
         <Router>
           <Switch>
@@ -28,14 +42,12 @@ function App() {
               </Link>
             </Route>
             <Route exact path="/tourisme">
-              <DataProvider>
                 <Route>
                   <Link to="/">
                     <Button>Retour</Button>
                   </Link>
                 </Route>
                 <Tourisme />
-              </DataProvider>
             </Route>
             <Route exact path="/jeux">
               <Route>
@@ -48,6 +60,7 @@ function App() {
           </Switch>
         </Router>
       </Container>
+    </DataProvider>
     </div>
   );
 }

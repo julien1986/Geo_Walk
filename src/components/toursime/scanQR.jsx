@@ -9,59 +9,57 @@ import axios from "axios";
 import DataContext from "../../context/DataContext";
 
 export default function ScanQR() {
-  const [trips, setTrips] = useState([]);
-  const [getQR, setQR] = useState({ resultat: "" });
-  //const { newtrips, setnewtrips } = useContext(DataContext);
-
-  // useEffect(() => {
-  //   axios
-  //     .get("10.1.107.4:8080/trips")
-  //     .then(response => {
-  //       // Handle success.
-  //       console.log("Data: ", response.data);
-  //       setTrips(response.data);
-  //     })
-  //     .catch(error => {
-  //       // Handle error.
-  //       console.log("An error occurred:", error);
-  //     });
-  // }, []);
-  const handleError = () => {
-    alert("Code non valide");
-  };
-  const handleScan = data => {
+  const {listTrips, setTripsContext} = useContext(DataContext)
+  let tripsLS = JSON.parse(localStorage.getItem("getTrips"))
+  
+  
+  const handleScan = (data) => {
+    //si j'ai des datas
     if (data) {
-      console.log(data);
-      setQR({ resultat: data });
+      const qr = data
+      //je lance une requête axios
       axios
-        .get(`10.1.107.4:8080/trips/${getQR.resultat}`)
+        .get(`http://10.1.107.3:8080/trips/${qr}`)
         .then(response => {
-          // Handle success.
-          console.log("Data: ", response.data);
-          let temp = [];
-          trips.map(
-            t =>
-              (temp = [
-                ...temp,
-                {
-                  trip_name: t.trip_name,
-                  categorie: t.categorie,
-                  pois: t.pois
-                }
-              ])
-          );
-          //console.log(temp)
-          localStorage.setItem("trips", JSON.stringify(temp));
+          //console.log("Data: ", response.data);
+          //si il y a des objets dans le local storage...
+          if(localStorage.getItem("getTrips")){
+            //console.log("il y a quelque chose dedans")
+            //je boucle sur tout ce que j'ai dans le contexte de l'app
+            listTrips.map(t=>{
+              //si l'id scanné correspond à l'id d'une des entrées du contexte
+              if(t.id === response.data.id){
+                alert("QR code déjà scanné")
+              //sinon je rajoute une entrée dans le local storage, je rajoute une entrée dans le contexte.
+              }else{
+                const addData = response.data;
+                tripsLS = JSON.parse(localStorage.getItem("getTrips"))
+                localStorage.setItem('getTrips', JSON.stringify([...tripsLS, addData]))
+                setTripsContext(response.data)
+                //si tout s'est bien passé
+                alert("Le QR Code a bien été scanné");
+              }
+            })
+            //... Si il n'y a rien dans le local storage, j'ajoute au local storage
+          } else{ 
+            console.log("il n' y a rien dedans")
+             localStorage.setItem("getTrips", JSON.stringify([response.data]))
+             setTripsContext(response.data)
+             //si tout s'est bien passé
+            alert("Le QR Code a bien été scanné");
+          }
         })
         .catch(error => {
-          // Handle error.
           console.log("An error occurred:", error);
         });
-
-      alert("Le QR Code a bien été scanné");
     }
   };
 
+  
+  const handleError = () => {
+    alert("Code non valide");
+  };
+  
   return (
     <div className="scanQR">
       <h2>Scannez un QR Code</h2>
@@ -71,7 +69,7 @@ export default function ScanQR() {
         onScan={handleScan}
         style={{ width: "100%" }}
       />
-      <p>Resultat: {getQR.resultat}</p>
     </div>
   );
 }
+
