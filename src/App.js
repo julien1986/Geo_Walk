@@ -12,7 +12,6 @@ import Jeux from "./components/jeux";
 import { DataProvider } from "./context/DataContext";
 
 function App() {
-  const HandleBackTourisme = () => {};
 
   return (
     <div className="App">
