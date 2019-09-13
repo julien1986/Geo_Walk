@@ -29,7 +29,7 @@ export default function ScanQR() {
             listTrips.map(t=>{
               //si l'id scanné correspond à l'id d'une des entrées du contexte
               if(t.id === response.data.id){
-                alert("QR code déjà scanné")
+                return (alert("QR code déjà scanné"))
               //sinon je rajoute une entrée dans le local storage, je rajoute une entrée dans le contexte.
               }else{
                 const addData = response.data;
