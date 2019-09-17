@@ -31,7 +31,8 @@ export default function ScanQR() {
             listTrips.map(t=>{
               //si l'id scanné correspond à l'id d'une des entrées du contexte
               if(t.id === response.data.id){
-                return (alert("QR code déjà scanné"))
+                return (alert("QR code déjà scanné"));
+                
               //sinon je rajoute une entrée dans le local storage, je rajoute une entrée dans le contexte.
               }else{
                 const addData = response.data;
@@ -39,7 +40,7 @@ export default function ScanQR() {
                 localStorage.setItem('getTrips', JSON.stringify([...tripsLS, addData]))
                 setTripsContext(response.data)
                 //si tout s'est bien passé
-                alert("Le QR Code a bien été scanné");
+                alert("Le QR Code a bien été scanné par ici");
               }
             })
             //... Si il n'y a rien dans le local storage, j'ajoute au local storage
@@ -48,7 +49,7 @@ export default function ScanQR() {
              localStorage.setItem("getTrips", JSON.stringify([response.data]))
              setTripsContext(response.data)
              //si tout s'est bien passé
-            alert("Le QR Code a bien été scanné");
+            alert("Le QR Code a bien été scanné par là");
           }
         })
         .catch(error => {
@@ -74,4 +75,3 @@ export default function ScanQR() {
     </div>
   );
 }
-

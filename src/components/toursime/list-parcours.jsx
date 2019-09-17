@@ -1,62 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { Container, Segment, List } from "semantic-ui-react";
-import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
+import { Header, Segment, List } from "semantic-ui-react";
 import uid from "uid";
 
 //IMPORT CONPONENTS
 import Plan from "./plan";
 
+//IMPORT CONTEXT
+import DataContext from "../../context/DataContext";
+
 export default function ListParcours() {
 
-
-  const [trips, setTrips] = useState([]);
-
-  useEffect(() => {
-    axios
-    .get('http://localhost:8080/trips')
-    .then(response => {
-      console.log('Data: ', response.data);
-      setTrips(response.data)
-    })
-    .catch(error => {
-      console.log('An error occurred:', error);
-    });
-  }, [])
-
-
-  const handleList = () =>{
-
-    let localTrips;
-    if(localStorage){
-      localTrips = JSON.parse(localStorage.getItem("trips"));
-      console.log(localTrips)
-      setTrips(localTrips)
-
-      return (
-      trips.map(trip =>
-      <List.Item key={uid()}>{trip.trip_name}, {trip.categorie}</List.Item>
-      ))
-    }
-    else{
-      return "Vous n'avez pas encore enregistré de parcours"
-    };
-
-    // let temp = [];
-    // trips.map(t => temp = [...temp, {
-    //     "trip_name": t.trip_name,
-    //     "categorie": t.categorie,
-    //     "pois": t.pois
-    //   }]);
-    // //console.log(temp)
-    // localStorage.setItem("trips", JSON.stringify(temp))
-  }
+  const {listTrips} = useContext(DataContext)
+  
 
   return (
     <>
-      <h1>Je suis le module de liste des parcours</h1>
+      <Header as='h1'>Liste des parcours</Header>
       <Segment>
-      <Plan />
-          <List>{handleList}</List>
+        <List divided relaxed>
+        {
+          listTrips !== [] ? (listTrips.map(t => (
+          <List.Item key={uid()}>
+            <List.Content>
+                <List.Header as='a'>{t.trip_name}:</List.Header>
+                <List.Description as='a'>{t.categorie}</List.Description>
+            </List.Content>
+          </List.Item>))) :  (<List.Item>Rien</List.Item>)
+        }
+        </List>
       </Segment>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./scss/App.scss";
 import { Container, Button } from "semantic-ui-react";
@@ -16,6 +16,7 @@ function App() {
 
   const [trips, setTrips] = useState([]);
   const [url, setUrl] = useState("http://10.1.107.5:8080");
+  
  
   const tripsSetter = (newtrips)=>{
     if (Array.isArray(newtrips)){
@@ -23,13 +24,21 @@ function App() {
   } else {setTrips([...trips, newtrips])}
   }
 
+  useEffect(() => {
+    const getTripsLS = JSON.parse(localStorage.getItem("getTrips"));
+    getTripsLS !== null ? setTrips(getTripsLS) :  setTrips([])
+    }, 
+    []
+  );
+
+
   return (
     <div className="App">
     <DataProvider
       value={{
         setTripsContext: tripsSetter,
         listTrips: trips,
-        url: url
+        url: url,
       }}
     >
       <Container>
