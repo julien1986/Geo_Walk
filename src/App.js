@@ -16,6 +16,19 @@ function App() {
 
   const [trips, setTrips] = useState([]);
   const [url, setUrl] = useState("http://10.1.107.5:8080");
+
+  const [showmap, setShowmap] = useState(false);
+  const [currentParcours, setCurrentParcours] = useState()
+
+  const handleClick = (parcours) => {
+    setCurrentParcours(parcours);
+    setShowmap(true)
+  }
+  const handleBack = ()=>{
+    setCurrentParcours("");
+    setShowmap(false)
+    console.log(showmap)
+  }
   
  
   const tripsSetter = (newtrips)=>{
@@ -39,6 +52,11 @@ function App() {
         setTripsContext: tripsSetter,
         listTrips: trips,
         url: url,
+        currentParcours: currentParcours,
+        setCurrentParcours: setCurrentParcours,
+        showmap: showmap,
+        setShowmap: setShowmap,
+        handleClick: handleClick
       }}
     >
       <Container>
@@ -54,9 +72,15 @@ function App() {
             </Route>
             <Route exact path="/tourisme">
                 <Route>
-                  <Link to="/">
-                    <Button>Retour</Button>
-                  </Link>
+                  {!showmap ?
+                    <Link to="/" onClick={handleBack}>
+                      <Button>Retour</Button>
+                    </Link>
+                     :
+                     <Link to="/tourisme" onClick={handleBack}>
+                      <Button>Retour</Button>
+                    </Link>
+                     }
                 </Route>
                 <Tourisme />
             </Route>
