@@ -6,6 +6,7 @@ import { Container, Segment } from "semantic-ui-react";
 
 //IMPORT COMPONENTS
 import ListParcours from "../components/toursime/list-parcours";
+import ScanQR from "../components/toursime/scanQR";
 import Plan from "../components/toursime/plan";
 
 //IMPORT CONTEXT
@@ -14,21 +15,22 @@ import DataContext from "../context/DataContext";
 //APP CONTEXT
 
 export default function Tourisme() {
-  const {showmap, setShowmap} = useContext(DataContext);
-  const {currentParcours, setCurrentParcours} = useContext(DataContext)
+  const { showmap, setShowmap } = useContext(DataContext);
+  const { currentParcours, setCurrentParcours } = useContext(DataContext);
 
   return (
     <Container>
       <Segment.Group>
-      {!showmap ?
+        {!showmap ? (
           <Segment>
             <ListParcours />
+            <ScanQR />
           </Segment>
-         :
-         <Segment>
-          <Plan />
-        </Segment>
-         }
+        ) : (
+          <Segment>
+            <Plan />
+          </Segment>
+        )}
       </Segment.Group>
     </Container>
   );

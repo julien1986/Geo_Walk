@@ -1,4 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { render } from "react-dom";
+import uid from "uid";
+
+//LEAFLET
+import { Map, Marker, Popup, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 //SEMANTIC UI
 import { Container } from "semantic-ui-react";
@@ -8,12 +15,32 @@ import DataContext from "../../context/DataContext";
 //créer le state qui va utiliser la requete vers les différents POI
 
 export default function Plan() {
-  const {currentParcours, setCurrentParcours} = useContext(DataContext)
+  const { currentParcours } = useContext(DataContext);
+
+  //Solution trouvée sur le net pour palier au fait que l'icone par défaut de posistion ne s'affiche pas
+  delete L.Icon.Default.prototype._getIconUrl;
+
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+  });
+  //fin de solution
+
+  //j'enregistre la position centrale du parcours
+  const [getPosition, setPosition] = useState({ lat: "50.471066", lng: "4.468738", zoom: "17" });
+  const position = [getPosition.lat, getPosition.lng];
 
   return (
-    <Container>
-      <h1>Je suis le module plan</h1>
-      {console.log(currentParcours)}
-    </Container>
+    <Map style={{ height: "100vh", width: "100vw" }} center={position} zoom={getPosition.zoom}>
+      <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+      {currentParcours.pois.map(poi => {
+        return (
+          <Marker key={uid()} position={[poi.latitude, poi.longitude]}>
+            <Popup>{poi.name}</Popup>
+          </Marker>
+        );
+      })}
+    </Map>
   );
 }
