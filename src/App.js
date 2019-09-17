@@ -15,6 +15,7 @@ function App() {
   const HandleBackTourisme = () => {};
 
   const [trips, setTrips] = useState([]);
+  const [url, setUrl] = useState("http://10.1.107.5:8080");
  
   const tripsSetter = (newtrips)=>{
     if (Array.isArray(newtrips)){
@@ -27,7 +28,8 @@ function App() {
     <DataProvider
       value={{
         setTripsContext: tripsSetter,
-        listTrips: trips
+        listTrips: trips,
+        url: url
       }}
     >
       <Container>

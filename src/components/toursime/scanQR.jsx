@@ -9,8 +9,9 @@ import axios from "axios";
 import DataContext from "../../context/DataContext";
 
 export default function ScanQR() {
-  const {listTrips, setTripsContext} = useContext(DataContext)
-  let tripsLS = JSON.parse(localStorage.getItem("getTrips"))
+  const {listTrips, setTripsContext} = useContext(DataContext);
+  let tripsLS = JSON.parse(localStorage.getItem("getTrips"));
+  const {url, setUrl} = useContext(DataContext);
   
   
   const handleScan = (data) => {
@@ -18,8 +19,9 @@ export default function ScanQR() {
     if (data) {
       const qr = data
       //je lance une requête axios
+      console.log(url)
       axios
-        .get(`http://10.1.107.3:8080/trips/${qr}`)
+        .get(`${url}/trips/${qr}`)
         .then(response => {
           //console.log("Data: ", response.data);
           //si il y a des objets dans le local storage...
