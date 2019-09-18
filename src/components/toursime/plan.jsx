@@ -50,13 +50,6 @@ export default function Plan() {
     <Map style={{ height: "100vh", width: "100vw" }} center={position} zoom={getPosition.zoom}>
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
-      {currentParcours.pois.map(poi => {
-        return (
-          <Marker key={uid()} position={[poi.latitude, poi.longitude]}>
-            <Popup>{poi.name}</Popup>
-          </Marker>
-        );
-      })}
     </Map>
   );
 }
