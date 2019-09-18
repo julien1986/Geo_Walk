@@ -17,6 +17,7 @@ import DataContext from "../../context/DataContext";
 export default function Plan() {
   const { currentParcours } = useContext(DataContext);
   const [userPosition, setUserPosition] = useState();
+  const [distance, setDistance] = useState();
 
   //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function Plan() {
     shadowSize: [41, 41]
   });
 
-  const distance = (lat1, lon1, lat2, lon2, unit) => {
+  const handleDistance = (lat1, lon1, lat2, lon2, unit) => {
     if (lat1 === lat2 && lon1 === lon2) {
       return 0;
     }else{
@@ -88,6 +89,7 @@ export default function Plan() {
         }
       //return dist;
     console.log(dist);
+    return setDistance(dist);
     }
   }
 
@@ -101,20 +103,20 @@ export default function Plan() {
     {/*centre la carte sur la position du user*/}
     {userPosition ? <CircleMarker center={userPosition} /> : ""}
 
+    {/*afficher les POIS*/}
+    {/* {currentParcours.pois.map(poi => 
+      <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
+        <Popup>{poi.name}</Popup>
+      </Marker>
+    )} */}
+    {"la" + console.log(distance)}
 
-    {distance < 0.010 ? <Marker icon={blueIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
-      <Popup>Cepegra en dur</Popup>
-    </Marker> : <Marker icon={redIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
+    {distance < 0.010 ? <Marker icon={blueIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => handleDistance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
+      <Popup>Hello</Popup>
+    </Marker> : <Marker icon={redIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => handleDistance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
       <Popup>Cepegra en dur</Popup>
     </Marker> }
 
     </Map>
   )
 }
-
-    // {/*afficher les POIS*/}
-    // {currentParcours.pois.map(poi => 
-    //   <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
-    //     <Popup>{poi.name}</Popup>
-    //   </Marker>
-    // )}
