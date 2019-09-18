@@ -24,6 +24,7 @@ export default function Tourisme() {
           <Segment>
             <ListParcours />
             <ScanQR />
+            <Plan/>
           </Segment>
         ) : (
           <Segment>

@@ -62,56 +62,59 @@ export default function Plan() {
     shadowSize: [41, 41]
   });
 
+  const distance = (lat1, lon1, lat2, lon2, unit) => {
+    if (lat1 === lat2 && lon1 === lon2) {
+      return 0;
+    }else{
+      let radlat1 = (Math.PI * lat1) / 180;
+      let radlat2 = (Math.PI * lat2) / 180;
+      let theta = lon1 - lon2;
+      let radtheta = (Math.PI * theta) / 180;
+      let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+
+        if(dist > 1){
+          dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = (dist * 180) / Math.PI;
+        dist = dist * 60 * 1.1515;
+
+        if(unit === "K"){
+          dist = dist * 1.609344;
+        }
+
+        if(unit === "N"){
+          dist = dist * 0.8684;
+        }
+      //return dist;
+    console.log(dist);
+    }
+  }
+
+
   return (
     <Map style={{ height: "100vh" }} center={userPosition} zoom={17}>
-      {/*afficher la source de la carte -> open strret map*/}
-      <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+      
+    {/*affiche la source de la carte -> open street map*/}
+    <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
 
-      {/*afficher le pointeur de l'utilisateur*/}
-      {userPosition ? <CircleMarker center={userPosition} /> : ""}
+    {/*centre la carte sur la position du user*/}
+    {userPosition ? <CircleMarker center={userPosition} /> : ""}
 
-      {/*afficher les POIS*/}
-      {currentParcours.pois.map(poi => {
-        //fonction pour calculer la distance entre le user et un poi
-        const distance = (lat1, lon1, lat2, lon2, unit) => {
-          if (lat1 === lat2 && lon1 === lon2) {
-            return 0;
-          } else {
-            let radlat1 = (Math.PI * lat1) / 180;
-            let radlat2 = (Math.PI * lat2) / 180;
-            let theta = lon1 - lon2;
-            let radtheta = (Math.PI * theta) / 180;
-            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-            if (dist > 1) {
-              dist = 1;
-            }
-            dist = Math.acos(dist);
-            dist = (dist * 180) / Math.PI;
-            dist = dist * 60 * 1.1515;
-            if (unit === "K") {
-              dist = dist * 1.609344;
-            }
-            if (unit === "N") {
-              dist = dist * 0.8684;
-            }
-            //return dist;
-            console.log(dist);
-          }
-        };
 
-        return (
-          <>
-            <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
-              <Popup>{poi.name}</Popup>
-            </Marker>
+    {distance < 0.010 ? <Marker icon={blueIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
+      <Popup>Cepegra en dur</Popup>
+    </Marker> : <Marker icon={redIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
+      <Popup>Cepegra en dur</Popup>
+    </Marker> }
 
-            {/*juste pour vérifier tant qu'on a pas strappy*/}
-            <Marker key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
-              <Popup>{poi.name}</Popup>
-            </Marker>
-          </>
-        );
-      })}
     </Map>
-  );
+  )
 }
+
+    // {/*afficher les POIS*/}
+    // {currentParcours.pois.map(poi => 
+    //   <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
+    //     <Popup>{poi.name}</Popup>
+    //   </Marker>
+    // )}
