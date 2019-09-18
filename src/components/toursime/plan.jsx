@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { render } from "react-dom";
 import uid from "uid";
 
 //LEAFLET
-import { Map, Marker, Popup, TileLayer } from "react-leaflet";
+import { Map, Marker, Popup, TileLayer, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -16,6 +16,21 @@ import DataContext from "../../context/DataContext";
 
 export default function Plan() {
   const { currentParcours } = useContext(DataContext);
+  const [userPosition, setUserPosition] = useState();
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        console.log(position);
+        setUserPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      error => alert(JSON.stringify(error)),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  }, []);
 
   //Solution trouvée sur le net pour palier au fait que l'icone par défaut de posistion ne s'affiche pas
   delete L.Icon.Default.prototype._getIconUrl;
@@ -34,6 +49,7 @@ export default function Plan() {
   return (
     <Map style={{ height: "100vh", width: "100vw" }} center={position} zoom={getPosition.zoom}>
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+      {userPosition ? <CircleMarker center={userPosition} /> : ""}
       {currentParcours.pois.map(poi => {
         return (
           <Marker key={uid()} position={[poi.latitude, poi.longitude]}>
