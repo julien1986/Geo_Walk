@@ -19,7 +19,7 @@ export default function Plan() {
   const [userPosition, setUserPosition] = useState();
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.watchPosition(
       position => {
         console.log(position);
         setUserPosition({
@@ -28,7 +28,7 @@ export default function Plan() {
         });
       },
       error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
     );
   }, []);
 
@@ -47,7 +47,7 @@ export default function Plan() {
   const position = [getPosition.lat, getPosition.lng];
 
   return (
-    <Map style={{ height: "100vh", width: "100vw" }} center={position} zoom={getPosition.zoom}>
+    <Map style={{ height: "100vh" }} center={position} zoom={getPosition.zoom}>
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
     </Map>
