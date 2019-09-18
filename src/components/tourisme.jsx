@@ -15,8 +15,7 @@ import DataContext from "../context/DataContext";
 //APP CONTEXT
 
 export default function Tourisme() {
-  const { showmap, setShowmap } = useContext(DataContext);
-  const { currentParcours, setCurrentParcours } = useContext(DataContext);
+  const { showmap } = useContext(DataContext);
 
   return (
     <Container>

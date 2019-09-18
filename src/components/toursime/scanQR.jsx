@@ -10,7 +10,6 @@ import DataContext from "../../context/DataContext";
 
 export default function ScanQR() {
   const { listTrips, setTripsContext } = useContext(DataContext);
-  let tripsLS = JSON.parse(localStorage.getItem("getTrips"));
   const { url, setUrl } = useContext(DataContext);
 
   const handleScan = data => {
@@ -18,37 +17,22 @@ export default function ScanQR() {
     if (data) {
       const qr = data;
       //je lance une requête axios
-      console.log(url);
+      //console.log(url);
       axios
         .get(`${url}/trips/${qr}`)
         .then(response => {
-          //console.log("Data: ", response.data);
-          //si il y a des objets dans le local storage...
-          if (localStorage.getItem("getTrips")) {
-            //console.log("il y a quelque chose dedans")
-            //je boucle sur tout ce que j'ai dans le contexte de l'app
-            listTrips.find(t => {
-              //si l'id scanné correspond à l'id d'une des entrées du contexte
-              if (t.id === response.data.id) {
-                return alert("QR code déjà scanné");
-
-                //sinon je rajoute une entrée dans le local storage, je rajoute une entrée dans le contexte.
-              } else {
-                const addData = response.data;
-                tripsLS = JSON.parse(localStorage.getItem("getTrips"));
-                localStorage.setItem("getTrips", JSON.stringify([...tripsLS, addData]));
-                setTripsContext(response.data);
-                //si tout s'est bien passé
-                alert("Le QR Code a bien été scanné par ici");
-              }
-            });
-            //... Si il n'y a rien dans le local storage, j'ajoute au local storage
+          console.log("Data: ", response.data);
+          if (listTrips !== []) {
+            if (listTrips.find(trips => trips.id === response.data.id)) {
+              console.log("parcours déjà scanné");
+              return;
+            } else {
+              localStorage.setItem("getTrips", JSON.stringify([...listTrips, response.data]));
+              setTripsContext(response.data);
+            }
           } else {
-            console.log("il n' y a rien dedans");
             localStorage.setItem("getTrips", JSON.stringify([response.data]));
             setTripsContext(response.data);
-            //si tout s'est bien passé
-            alert("Le QR Code a bien été scanné par là");
           }
         })
         .catch(error => {
