@@ -18,6 +18,7 @@ export default function Plan() {
   const { currentParcours } = useContext(DataContext);
   const [userPosition, setUserPosition] = useState();
 
+  //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
     navigator.geolocation.watchPosition(
       position => {
@@ -32,24 +33,85 @@ export default function Plan() {
     );
   }, []);
 
-  //Solution trouvée sur le net pour palier au fait que l'icone par défaut de posistion ne s'affiche pas
-  delete L.Icon.Default.prototype._getIconUrl;
-
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+  //ICON POUR LEAFLET
+  let blueIcon = new L.Icon({
+    iconUrl: "img/marker-icon-2x-blue.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
   });
-  //fin de solution
 
-  //j'enregistre la position centrale du parcours
-  const [getPosition, setPosition] = useState({ lat: "50.471066", lng: "4.468738", zoom: "17" });
-  const position = [getPosition.lat, getPosition.lng];
+  let redIcon = new L.Icon({
+    iconRetinaUrl: "img/marker-icon-2x-red.png",
+    iconUrl: "img/marker-icon-red.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  let greenIcon = new L.Icon({
+    iconUrl: "img/marker-icon-2x-green.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
   return (
-    <Map style={{ height: "100vh" }} center={position} zoom={getPosition.zoom}>
+    <Map style={{ height: "100vh" }} center={userPosition} zoom={17}>
+      {/*afficher la source de la carte -> open strret map*/}
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+
+      {/*afficher le pointeur de l'utilisateur*/}
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
+
+      {/*afficher les POIS*/}
+      {currentParcours.pois.map(poi => {
+        //fonction pour calculer la distance entre le user et un poi
+        const distance = (lat1, lon1, lat2, lon2, unit) => {
+          if (lat1 === lat2 && lon1 === lon2) {
+            return 0;
+          } else {
+            let radlat1 = (Math.PI * lat1) / 180;
+            let radlat2 = (Math.PI * lat2) / 180;
+            let theta = lon1 - lon2;
+            let radtheta = (Math.PI * theta) / 180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+              dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = (dist * 180) / Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit === "K") {
+              dist = dist * 1.609344;
+            }
+            if (unit === "N") {
+              dist = dist * 0.8684;
+            }
+            //return dist;
+            console.log(dist);
+          }
+        };
+
+        return (
+          <>
+            <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
+              <Popup>{poi.name}</Popup>
+            </Marker>
+
+            {/*juste pour vérifier tant qu'on a pas strappy*/}
+            <Marker key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude, "K")}>
+              <Popup>{poi.name}</Popup>
+            </Marker>
+          </>
+        );
+      })}
     </Map>
   );
 }
