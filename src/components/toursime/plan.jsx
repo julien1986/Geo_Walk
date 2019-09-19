@@ -63,7 +63,7 @@ export default function Plan() {
         });
       },
       error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
     );
     const timer = () => {
       setInterval(user, 500);
