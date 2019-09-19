@@ -13,7 +13,6 @@ import { Container } from "semantic-ui-react";
 import DataContext from "../../context/DataContext";
 
 //créer le state qui va utiliser la requete vers les différents POI
-
 export default function Plan() {
   const { currentParcours } = useContext(DataContext);
   const [userPosition, setUserPosition] = useState();
