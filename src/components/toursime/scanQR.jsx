@@ -18,6 +18,7 @@ export default function ScanQR() {
       const qr = data;
       //je lance une requête axios
       //console.log(url);
+
       axios
         .get(`${url}/trips/${qr}`)
         .then(response => {
