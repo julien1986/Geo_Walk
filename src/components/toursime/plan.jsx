@@ -2,6 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { render } from "react-dom";
 import uid from "uid";
 
+//IMPORT COMPONENT
+import Description from "./description";
+
 //TURF
 import turf from "turf";
 
@@ -10,29 +13,43 @@ import { Map, Marker, Popup, TileLayer, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-//SEMANTIC UI
-import { Container } from "semantic-ui-react";
+//MATERIAL-UI
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+
 //IMPORT CONTEXT
 import DataContext from "../../context/DataContext";
+
+const useStyles = makeStyles(theme => ({
+  close: {
+    padding: theme.spacing(0.5)
+  }
+}));
 
 export default function Plan() {
   const { currentParcours } = useContext(DataContext);
   const [lastUserPosition, setLastUserPosition] = useState();
   const [userPosition, setUserPosition] = useState(lastUserPosition);
-  let color = "red";
-  let icon = new L.Icon({
-    iconRetinaUrl: `img/marker-icon-2x-${color}.png`,
-    iconUrl: "img/marker-icon-red.png",
-    shadowUrl: "img/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
+  const [showDescription, setShowDescriptionn] = useState(false);
+
+  //FONCTION POUR MATERIAL-UI
+
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+
+  function handleClose(event, reason) {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  }
 
   //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
-    //fonction pour aller chercher la position du user
+    //foncton pour aller chercher la position du user
     const user = navigator.geolocation.getCurrentPosition(
       position => {
         console.log(position);
@@ -46,51 +63,101 @@ export default function Plan() {
         });
       },
       error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
     );
     const timer = () => {
       setInterval(user, 500);
     };
-  },
-  []);
+  }, []);
+  //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
+  const showMore = () => {
+    setShowDescriptionn(true);
+    console.log("module description appelé");
+  };
 
-  const handleDistance = (userLat, userLng, poiLat, poiLng) => {
-    let from = turf.point([userLat, userLng]);
-    let to = turf.point([poiLat, poiLng]);
+  //ICON POUR LEAFLET
+  let blueIcon = new L.Icon({
+    iconUrl: "img/marker-icon-2x-blue.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
-    let distance = turf.distance(from, to);
+  let redIcon = new L.Icon({
+    iconRetinaUrl: "img/marker-icon-2x-red.png",
+    iconUrl: "img/marker-icon-red.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
-    console.log(distance)
-    return distance;
-  }
-
-
+  let greenIcon = new L.Icon({
+    iconUrl: "img/marker-icon-2x-green.png",
+    shadowUrl: "img/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
   return (
     <Map style={{ height: "100vh" }} center={userPosition} zoom={17}>
+      {showDescription ? <Description /> : ""}
       {/*affiche la source de la carte -> open street map*/}
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
 
       {/*centre la carte sur la position du user*/}
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
-      
-      {currentParcours.pois.map(poi => (
-        () => handleDistance(poi.latitude, poi.)
-        <Marker
-          icon={distance > 0.01 ? color = "blue" : color = "red"}
-          key={uid()}
-          position={[poi.latitude, poi.longitude]}>
-            <Popup>{poi.name}</Popup>
-        </Marker>
-      ))}
+      {/* POI VIA AXIOS */}
+      {userPosition
+        ? currentParcours.pois.map(poi => {
+            let from = turf.point([userPosition.lat, userPosition.lng]);
+            let to = turf.point([poi.latitude, poi.longitude]);
+            let distance = turf.distance(from, to);
+            console.log(distance);
+
+            if (distance < 0.01) {
+              return (
+                <>
+                  <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                    <Popup>{poi.name}</Popup>
+                  </Marker>
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left"
+                    }}
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    ContentProps={{
+                      "aria-describedby": "message-id"
+                    }}
+                    message={""}
+                    action={[
+                      <Button key="undo" color="secondary" size="small" onClick={showMore}>
+                        En savoir plus
+                      </Button>,
+                      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                        <CloseIcon />
+                      </IconButton>
+                    ]}
+                  />
+                </>
+              );
+            } else {
+              return (
+                <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                  <Popup>{poi.name}</Popup>
+                </Marker>
+              );
+            }
+          })
+        : ""}
     </Map>
   );
 }
-
-// <Marker icon={blueIcon} key={uid()} position={[50.471066, 4.468738]} onClick={() => distance(userPosition.lat, userPosition.lng, 50.471066, 4.468738, "K")}>
-//           <Popup>Cepegra en dur</Popup>
-//         </Marker>
-
-
-// onClick={() => {
-//   distance(userPosition.lat, userPosition.lng, poi.latitude, poi.longitude);

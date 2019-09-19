@@ -1,0 +1,39 @@
+{
+  "id": 1,
+  "trip_name": "Gosselies",
+  "categorie": "Formations",
+  "created_at": "2019-09-12T09:12:55.000Z",
+  "updated_at": "2019-09-12T09:12:55.000Z",
+  "pois": [
+    {
+      "id": 2,
+      "latitude": 50.470042,
+      "longitude": 4.462641,
+      "name": "Technocampus",
+      "description": "TechnoCampus se veut le centre de référence en matière de formation et de sensibilisation aux métiers technologiques.",
+      "medias": {},
+      "created_at": "2019-09-12T09:10:50.000Z",
+      "updated_at": "2019-09-12T09:10:50.000Z"
+    },
+    {
+      "id": 1,
+      "latitude": 50.471127,
+      "longitude": 4.468706,
+      "name": "Centre de compétence/Forem Cepegra",
+      "description": "Le Cepegra, Centre de compétence du Forem, aide les professionnels du secteur de la communication visuelle et de l’industrie graphique (graphistes, web designers, web communicants, imprimeurs…) à rester à la pointe de la technologie et à être ainsi plus compétitifs.",
+      "medias": {},
+      "created_at": "2019-09-12T09:07:27.000Z",
+      "updated_at": "2019-09-12T09:07:27.000Z"
+    },
+    {
+      "id": 3,
+      "latitude": 50.476362,
+      "longitude": 4.472978,
+      "name": "Technofutur TIC",
+      "description": "Au-delà des programmes variés et adaptés aux spécificités de publics souvent différents, agissent plusieurs équipes, qui sont autant de Pôles ou de Départements.",
+      "medias": {},
+      "created_at": "2019-09-12T09:12:23.000Z",
+      "updated_at": "2019-09-12T09:12:23.000Z"
+    }
+  ]
+}
