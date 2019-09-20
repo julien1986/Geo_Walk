@@ -65,14 +65,16 @@ export default function Plan() {
       error => alert(JSON.stringify(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
     );
-    const timer = () => {
-      setInterval(user, 500);
-    };
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
   const showMore = () => {
     setShowDescriptionn(true);
     console.log("module description appelé");
+  };
+
+  const timer = () => {
+    setInterval(user, 500);
+    console.log(`ici ${user}`);
   };
 
   //ICON POUR LEAFLET
