@@ -30,8 +30,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Plan() {
-  const { currentParcours } = useContext(DataContext);
-  const [lastUserPosition, setLastUserPosition] = useState();
+  const { currentParcours, lastUserPosition, setLastUserPosition } = useContext(DataContext);
   const [userPosition, setUserPosition] = useState(lastUserPosition);
   const [showDescription, setShowDescriptionn] = useState(false);
 
@@ -50,24 +49,21 @@ export default function Plan() {
   //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
     //foncton pour aller chercher la position du user
-    const user = () => {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          console.log(position);
-          setUserPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          setLastUserPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        error => alert(JSON.stringify(error)),
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-      );
-    };
-    setInterval(user, 1000);
+    const user = navigator.geolocation.watchPosition(
+      position => {
+        console.log(position);
+        setUserPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        setLastUserPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      error => alert(JSON.stringify(error)),
+      { enableHighAccuracy: true, timeout: 200000, maximumAge: 0 }
+    );
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
   const showMore = () => {

@@ -17,6 +17,7 @@ function App() {
 
   const [showmap, setShowmap] = useState(false);
   const [currentParcours, setCurrentParcours] = useState();
+  const [lastUserPosition, setLastUserPosition] = useState();
 
   const handleClick = parcours => {
     setCurrentParcours(parcours);
@@ -26,6 +27,22 @@ function App() {
     setCurrentParcours("");
     setShowmap(false);
     console.log(showmap);
+  };
+  const handleBackList = () => {
+    setCurrentParcours("");
+    setShowmap(false);
+    console.log(showmap);
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        console.log(position);
+        setLastUserPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      error => alert(JSON.stringify(error)),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+    );
   };
 
   const tripsSetter = newtrips => {
@@ -52,7 +69,9 @@ function App() {
           setCurrentParcours: setCurrentParcours,
           showmap: showmap,
           setShowmap: setShowmap,
-          handleClick: handleClick
+          handleClick: handleClick,
+          lastUserPosition: lastUserPosition,
+          setLastUserPosition: setLastUserPosition
         }}
       >
         <Container>
@@ -73,7 +92,7 @@ function App() {
                       <Button>Retour</Button>
                     </Link>
                   ) : (
-                    <Link to="/tourisme" onClick={handleBack}>
+                    <Link to="/tourisme" onClick={handleBackList}>
                       <Button>Retour</Button>
                     </Link>
                   )}
