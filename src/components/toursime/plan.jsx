@@ -34,7 +34,6 @@ export default function Plan() {
   const [lastUserPosition, setLastUserPosition] = useState();
   const [userPosition, setUserPosition] = useState(lastUserPosition);
   const [showDescription, setShowDescriptionn] = useState(false);
-
   //FONCTION POUR MATERIAL-UI
 
   const classes = useStyles();
@@ -50,24 +49,24 @@ export default function Plan() {
   //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
     //foncton pour aller chercher la position du user
-    const user = navigator.geolocation.getCurrentPosition(
-      position => {
-        console.log(position);
-        setUserPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        setLastUserPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-      },
-      error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-    );
-    const timer = () => {
-      setInterval(user, 500);
+    const user = () => {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          //console.log(position);
+          setUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setLastUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        error => alert(JSON.stringify(error)),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
     };
+    setInterval(user, 1000);
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
   const showMore = () => {
@@ -106,58 +105,57 @@ export default function Plan() {
 
   return (
     <Map style={{ height: "100vh" }} center={userPosition} zoom={17}>
+      {/* composant permettant de voir plus d'info sur le poi */}
       {showDescription ? <Description /> : ""}
       {/*affiche la source de la carte -> open street map*/}
       <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
 
       {/*centre la carte sur la position du user*/}
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
-      {/* POI VIA AXIOS */}
-      {userPosition
-        ? currentParcours.pois.map(poi => {
-            let from = turf.point([userPosition.lat, userPosition.lng]);
-            let to = turf.point([poi.latitude, poi.longitude]);
-            let distance = turf.distance(from, to);
-            console.log(distance);
-
-            if (distance < 0.01) {
-              return (
-                <>
-                  <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
-                    <Popup>{poi.name}</Popup>
-                  </Marker>
-                  <Snackbar
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left"
-                    }}
-                    open={open}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                    ContentProps={{
-                      "aria-describedby": "message-id"
-                    }}
-                    message={""}
-                    action={[
-                      <Button key="undo" color="secondary" size="small" onClick={showMore}>
-                        En savoir plus
-                      </Button>,
-                      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
-                        <CloseIcon />
-                      </IconButton>
-                    ]}
-                  />
-                </>
-              );
-            } else {
-              return (
-                <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
-                  <Popup>{poi.name}</Popup>
-                </Marker>
-              );
-            }
-          })
-        : ""}
+      {/* POI VIA AXIOS */
+      currentParcours.pois.map(poi => {
+        let from = turf.point([userPosition.lat, userPosition.lng]);
+        let to = turf.point([poi.latitude, poi.longitude]);
+        let distance = turf.distance(from, to);
+        //console.log(distance);
+        if (distance < 0.01) {
+          return (
+            <>
+              <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                <Popup>{poi.name}</Popup>
+              </Marker>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left"
+                }}
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                ContentProps={{
+                  "aria-describedby": "message-id"
+                }}
+                message={""}
+                action={[
+                  <Button key="undo" color="secondary" size="small" onClick={showMore}>
+                    En savoir plus
+                  </Button>,
+                  <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                    <CloseIcon />
+                  </IconButton>
+                ]}
+              />
+            </>
+          );
+        } else {
+          return (
+            <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+              <Popup>{poi.name}</Popup>
+            </Marker>
+          );
+        }
+      })}
+      {currentParcours.pois.map(poi => {})}
     </Map>
   );
 }
