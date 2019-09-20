@@ -4,9 +4,34 @@ import "../../scss/tourisme/description.scss";
 //SEMANTIC UI
 import { Card, Icon, Image } from "semantic-ui-react";
 
-export default function Description() {
-  return (
+//MATERIAL UI
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  close: {
+    padding: theme.spacing(0.5)
+  }
+}));
+
+export default function Description(props) {
+  console.log(props);
+  const classes = useStyles();
+  const [openPopup, setOpenPopup] = React.useState(true);
+
+  function handleClosePopup(event, reason) {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenPopup(false);
+  }
+
+  return openPopup ? (
     <Card className="Mydescription">
+      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClosePopup}>
+        <CloseIcon />
+      </IconButton>
       <Image src="/images/avatar/large/matthew.png" wrapped ui={false} />
       <Card.Content>
         <Card.Header>Matthew</Card.Header>
@@ -22,5 +47,7 @@ export default function Description() {
         </a>
       </Card.Content>
     </Card>
+  ) : (
+    ""
   );
 }
