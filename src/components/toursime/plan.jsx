@@ -61,8 +61,8 @@ export default function Plan() {
           lng: position.coords.longitude
         });
       },
-      error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 200000, maximumAge: 0 }
+      error => JSON.stringify(error),
+      { enableHighAccuracy: true, timeout: 2000000, maximumAge: 0 }
     );
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
@@ -126,6 +126,9 @@ export default function Plan() {
             if (distance < 0.01) {
               return (
                 <>
+                  <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                    <Popup>{poi.name}</Popup>
+                  </Marker>
                   <Snackbar
                     anchorOrigin={{
                       vertical: "bottom",

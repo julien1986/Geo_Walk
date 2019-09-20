@@ -40,8 +40,8 @@ function App() {
           lng: position.coords.longitude
         });
       },
-      error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      error => JSON.stringify(error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 2000 }
     );
   };
 
