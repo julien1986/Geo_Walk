@@ -114,7 +114,7 @@ export default function Plan() {
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
       {currentParcours.pois.map(poi => {
         return (
-          <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+          <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
             <Popup>{poi.name}</Popup>
           </Marker>
         );
@@ -127,27 +127,32 @@ export default function Plan() {
         //console.log(distance);
         if (distance < 0.01) {
           return (
-            <Snackbar
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left"
-              }}
-              open={open}
-              autoHideDuration={6000}
-              onClose={handleClose}
-              ContentProps={{
-                "aria-describedby": "message-id"
-              }}
-              message={""}
-              action={[
-                <Button key="undo" color="secondary" size="small" onClick={showMore}>
-                  En savoir plus
-                </Button>,
-                <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
-                  <CloseIcon />
-                </IconButton>
-              ]}
-            />
+            <>
+              <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                <Popup>{poi.name}</Popup>
+              </Marker>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left"
+                }}
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                ContentProps={{
+                  "aria-describedby": "message-id"
+                }}
+                message={""}
+                action={[
+                  <Button key="undo" color="secondary" size="small" onClick={showMore}>
+                    En savoir plus
+                  </Button>,
+                  <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                    <CloseIcon />
+                  </IconButton>
+                ]}
+              />
+            </>
           );
         }
       })}
