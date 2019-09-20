@@ -64,10 +64,10 @@ export default function Plan() {
           });
         },
         error => alert(JSON.stringify(error)),
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
       );
     };
-    setInterval(user, 500);
+    setInterval(user, 1000);
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
   const showMore = () => {
@@ -104,7 +104,7 @@ export default function Plan() {
     shadowSize: [41, 41]
   });
 
-  return userPosition ? (
+  return (
     <Map style={{ height: "100vh" }} center={userPosition} zoom={17}>
       {showDescription ? <Description /> : ""}
       {/*affiche la source de la carte -> open street map*/}
@@ -112,6 +112,7 @@ export default function Plan() {
 
       {/*centre la carte sur la position du user*/}
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
+
       {currentParcours.pois.map(poi => {
         return (
           <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
@@ -119,45 +120,42 @@ export default function Plan() {
           </Marker>
         );
       })}
-      {/* POI VIA AXIOS */
-      currentParcours.pois.map(poi => {
-        let from = turf.point([userPosition.lat, userPosition.lng]);
-        let to = turf.point([poi.latitude, poi.longitude]);
-        let distance = turf.distance(from, to);
-        //console.log(distance);
-        if (distance < 0.01) {
-          return (
-            <>
-              <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
-                <Popup>{poi.name}</Popup>
-              </Marker>
-              <Snackbar
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left"
-                }}
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-                ContentProps={{
-                  "aria-describedby": "message-id"
-                }}
-                message={""}
-                action={[
-                  <Button key="undo" color="secondary" size="small" onClick={showMore}>
-                    En savoir plus
-                  </Button>,
-                  <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
-                    <CloseIcon />
-                  </IconButton>
-                ]}
-              />
-            </>
-          );
-        }
-      })}
+
+      {userPosition
+        ? currentParcours.pois.map(poi => {
+            let from = turf.point([userPosition.lat, userPosition.lng]);
+            let to = turf.point([poi.latitude, poi.longitude]);
+            let distance = turf.distance(from, to);
+            //console.log(distance);
+            if (distance < 0.01) {
+              return (
+                <>
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left"
+                    }}
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    ContentProps={{
+                      "aria-describedby": "message-id"
+                    }}
+                    message={""}
+                    action={[
+                      <Button key="undo" color="secondary" size="small" onClick={showMore}>
+                        En savoir plus
+                      </Button>,
+                      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                        <CloseIcon />
+                      </IconButton>
+                    ]}
+                  />
+                </>
+              );
+            }
+          })
+        : ""}
     </Map>
-  ) : (
-    ""
   );
 }
