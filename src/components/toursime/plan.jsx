@@ -112,52 +112,49 @@ export default function Plan() {
 
       {/*centre la carte sur la position du user*/}
       {userPosition ? <CircleMarker center={userPosition} /> : ""}
-      {/* POI VIA AXIOS */}
-      {userPosition
-        ? currentParcours.pois.map(poi => {
-            let from = turf.point([userPosition.lat, userPosition.lng]);
-            let to = turf.point([poi.latitude, poi.longitude]);
-            let distance = turf.distance(from, to);
-            console.log(distance);
-
-            if (distance < 0.01) {
-              return (
-                <>
-                  <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
-                    <Popup>{poi.name}</Popup>
-                  </Marker>
-                  <Snackbar
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left"
-                    }}
-                    open={open}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                    ContentProps={{
-                      "aria-describedby": "message-id"
-                    }}
-                    message={""}
-                    action={[
-                      <Button key="undo" color="secondary" size="small" onClick={showMore}>
-                        En savoir plus
-                      </Button>,
-                      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
-                        <CloseIcon />
-                      </IconButton>
-                    ]}
-                  />
-                </>
-              );
-            } else {
-              return (
-                <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
-                  <Popup>{poi.name}</Popup>
-                </Marker>
-              );
-            }
-          })
-        : ""}
+      {/* POI VIA AXIOS */
+      currentParcours.pois.map(poi => {
+        let from = turf.point([userPosition.lat, userPosition.lng]);
+        let to = turf.point([poi.latitude, poi.longitude]);
+        let distance = turf.distance(from, to);
+        //console.log(distance);
+        if (distance < 0.01) {
+          return (
+            <>
+              <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                <Popup>{poi.name}</Popup>
+              </Marker>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left"
+                }}
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                ContentProps={{
+                  "aria-describedby": "message-id"
+                }}
+                message={""}
+                action={[
+                  <Button key="undo" color="secondary" size="small" onClick={showMore}>
+                    En savoir plus
+                  </Button>,
+                  <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                    <CloseIcon />
+                  </IconButton>
+                ]}
+              />
+            </>
+          );
+        } else {
+          return (
+            <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+              <Popup>{poi.name}</Popup>
+            </Marker>
+          );
+        }
+      })}
     </Map>
   );
 }
