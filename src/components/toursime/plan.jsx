@@ -155,7 +155,6 @@ export default function Plan() {
           );
         }
       })}
-      {currentParcours.pois.map(poi => {})}
     </Map>
   );
 }
