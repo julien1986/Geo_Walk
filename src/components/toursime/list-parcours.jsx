@@ -9,8 +9,6 @@ import uid from "uid";
 import DataContext from "../../context/DataContext";
 
 export default function ListParcours() {
-  const { showmap, setShowmap } = useContext(DataContext);
-  const { currentParcours, setCurrentParcours } = useContext(DataContext);
   const { listTrips } = useContext(DataContext);
   const { handleClick } = useContext(DataContext);
 

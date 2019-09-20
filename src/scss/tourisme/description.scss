@@ -1,5 +1,8 @@
 .Mydescription {
   z-index: 999 !important;
-  margin: 0 auto !important;
   position: absolute !important;
+  display: flex;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100%;
 }

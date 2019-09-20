@@ -33,7 +33,7 @@ export default function Plan() {
   const { currentParcours, lastUserPosition, setLastUserPosition } = useContext(DataContext);
   const [userPosition, setUserPosition] = useState(lastUserPosition);
   const [showDescription, setShowDescriptionn] = useState(false);
-  const [idpoi, setidpoi] = useState();
+  const [poi, setpoi] = useState();
 
   //FONCTION POUR MATERIAL-UI
 
@@ -52,7 +52,7 @@ export default function Plan() {
     //foncton pour aller chercher la position du user
     const user = navigator.geolocation.watchPosition(
       position => {
-        console.log(position);
+        //console.log(position);
         setUserPosition({
           lat: position.coords.latitude,
           lng: position.coords.longitude
@@ -67,9 +67,9 @@ export default function Plan() {
     );
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
-  const showMore = id => {
+  const showMore = poi => {
     setShowDescriptionn(true);
-    setidpoi(id);
+    setpoi(poi);
     console.log("module description appelé");
   };
 
@@ -104,7 +104,7 @@ export default function Plan() {
 
   return (
     <>
-      {showDescription ? <Description id={idpoi} /> : ""}
+      {showDescription ? <Description poi={poi} /> : ""}
       <Map style={{ height: "85vh" }} center={userPosition} zoom={17}>
         {/*affiche la source de la carte -> open street map*/}
         <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.osm.org/{z}/{x}/{y}.png" />
@@ -114,7 +114,7 @@ export default function Plan() {
 
         {currentParcours.pois.map(poi => {
           return (
-            <Marker icon={redIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+            <Marker icon={redIcon} position={[poi.latitude, poi.longitude]} key={poi.id}>
               <Popup>{poi.name}</Popup>
             </Marker>
           );
@@ -126,10 +126,10 @@ export default function Plan() {
               let to = turf.point([poi.latitude, poi.longitude]);
               let distance = turf.distance(from, to);
               //console.log(distance);
-              if (distance < 0.01) {
+              if (distance < 0.01 && poi.visited === false) {
                 return (
                   <>
-                    <Marker icon={blueIcon} key={uid()} position={[poi.latitude, poi.longitude]}>
+                    <Marker icon={blueIcon} key={poi.id} position={[poi.latitude, poi.longitude]}>
                       <Popup>{poi.name}</Popup>
                     </Marker>
                     <Snackbar
@@ -145,7 +145,37 @@ export default function Plan() {
                       }}
                       message={""}
                       action={[
-                        <Button key="undo" color="secondary" size="small" onClick={() => showMore(poi.id)}>
+                        <Button key="undo" color="secondary" size="small" onClick={() => showMore(poi)}>
+                          En savoir plus
+                        </Button>,
+                        <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+                          <CloseIcon />
+                        </IconButton>
+                      ]}
+                    />
+                  </>
+                );
+              }
+              if (distance < 0.01 && poi.visited === true) {
+                return (
+                  <>
+                    <Marker icon={greenIcon} key={poi.id} position={[poi.latitude, poi.longitude]}>
+                      <Popup>{poi.name}</Popup>
+                    </Marker>
+                    <Snackbar
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left"
+                      }}
+                      open={open}
+                      autoHideDuration={6000}
+                      onClose={handleClose}
+                      ContentProps={{
+                        "aria-describedby": "message-id"
+                      }}
+                      message={""}
+                      action={[
+                        <Button key="undo" color="secondary" size="small" onClick={() => showMore(poi)}>
                           En savoir plus
                         </Button>,
                         <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>

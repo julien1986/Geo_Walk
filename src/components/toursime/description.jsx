@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../scss/tourisme/description.scss";
 
 //SEMANTIC UI
@@ -8,6 +8,8 @@ import { Card, Icon, Image } from "semantic-ui-react";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
+import DataContext from "../../context/DataContext";
+import { timeout } from "q";
 
 const useStyles = makeStyles(theme => ({
   close: {
@@ -16,37 +18,38 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Description(props) {
-  console.log(props);
+  //console.log(props);
   const classes = useStyles();
   const [openPopup, setOpenPopup] = React.useState(true);
+  const { currentParcours, setCurrentParcours, listTrips } = useContext(DataContext);
 
   function handleClosePopup(event, reason) {
     if (reason === "clickaway") {
       return;
     }
     setOpenPopup(false);
+    console.log(currentParcours);
+    listTrips.map(trip => {
+      if (trip.id === currentParcours.id) {
+        setCurrentParcours({ ...currentParcours, pois: currentParcours.pois.map(p => (p.id === props.poi.id ? { ...p, visited: true } : p)) });
+        localStorage.setItem("getTrips", JSON.stringify(listTrips));
+      }
+    });
   }
 
   return openPopup ? (
-    <Card className="Mydescription">
-      <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClosePopup}>
-        <CloseIcon />
-      </IconButton>
-      <Image src="/images/avatar/large/matthew.png" wrapped ui={false} />
-      <Card.Content>
-        <Card.Header>Matthew</Card.Header>
-        <Card.Meta>
-          <span className="date">Joined in 2015</span>
-        </Card.Meta>
-        <Card.Description>Matthew is a musician living in Nashville.</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <a>
-          <Icon name="user" />
-          22 Friends
-        </a>
-      </Card.Content>
-    </Card>
+    <div className="Mydescription">
+      <Card>
+        <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClosePopup}>
+          <CloseIcon />
+        </IconButton>
+        <Image src={props.poi.medias.image} wrapped ui={false} />
+        <Card.Content>
+          <Card.Header>{props.poi.name}</Card.Header>
+          <Card.Description>{props.poi.description}</Card.Description>
+        </Card.Content>
+      </Card>
+    </div>
   ) : (
     ""
   );
