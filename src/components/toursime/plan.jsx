@@ -50,24 +50,24 @@ export default function Plan() {
   //LOCALISE LE USER ET MET SA POSITION À JOUR LORSQU'IL BOUGE
   useEffect(() => {
     //foncton pour aller chercher la position du user
-    const user = navigator.geolocation.getCurrentPosition(
-      position => {
-        console.log(position);
-        setUserPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        setLastUserPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-      },
-      error => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
-    );
-    const timer = () => {
-      setInterval(user, 500);
+    const user = () => {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          console.log(position);
+          setUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setLastUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        error => alert(JSON.stringify(error)),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 450 }
+      );
     };
+    setInterval(user, 500);
   }, []);
   //FONCTION POUR AFFICHER LE PANNEAU DÉTAILLÉ LORS DES NOTIFS
   const showMore = () => {
