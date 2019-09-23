@@ -21,7 +21,7 @@ export default function Description(props) {
   //console.log(props);
   const classes = useStyles();
   const [openPopup, setOpenPopup] = React.useState(true);
-  const { currentParcours, setCurrentParcours, listTrips } = useContext(DataContext);
+  const { currentParcours, setCurrentParcours, listTrips, setTrips, setTripsContext } = useContext(DataContext);
 
   function handleClosePopup(event, reason) {
     if (reason === "clickaway") {
@@ -32,7 +32,6 @@ export default function Description(props) {
     listTrips.map(trip => {
       if (trip.id === currentParcours.id) {
         setCurrentParcours({ ...currentParcours, pois: currentParcours.pois.map(p => (p.id === props.poi.id ? { ...p, visited: true } : p)) });
-        localStorage.setItem("getTrips", JSON.stringify(listTrips));
       }
     });
   }

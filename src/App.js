@@ -13,7 +13,7 @@ import { DataProvider } from "./context/DataContext";
 
 function App() {
   const [trips, setTrips] = useState([]);
-  const [url, setUrl] = useState("http://10.1.107.3:8080");
+  const [url, setUrl] = useState("http://10.1.107.9:8080");
 
   const [showmap, setShowmap] = useState(false);
   const [currentParcours, setCurrentParcours] = useState();
@@ -62,6 +62,7 @@ function App() {
     <div className="App">
       <DataProvider
         value={{
+          setTrips: setTrips,
           setTripsContext: tripsSetter,
           listTrips: trips,
           url: url,
